@@ -9,8 +9,11 @@ class ArticlesView(FlaskView):
 
 	def post(self):
 		url = request.get_data()
-		res ={'result':'Success'}
-		merge_article(url)
+		_id = merge_article(url)
+		res ={
+			'result':'Success',
+			'id':_id
+		}
 		return Response(
 				response = dumps(res),
 				status = 200,
@@ -27,7 +30,6 @@ class ArticlesView(FlaskView):
 	def get(self, id):
 		art = neo.get_node(id)
 		sources = neo.get_article_sources(art['url'])
-		print sources
 		topics = neo.get_article_topics(art['url'])
 		return render_template(
 			'article.html',
@@ -59,7 +61,6 @@ class TopicsView(FlaskView):
 class DomainsView(FlaskView):
 	def index(self):
 		domains = neo.get_nodes('Domain',order='articles',  limit=100)
-		print domains
 		return render_template(
 			'domains.html',
 			domains=domains
@@ -69,7 +70,7 @@ class DomainsView(FlaskView):
 		try:
 			domain = dict(neo.get_node(id).items())
 		except ValueError:
-			domain = dict(neo.get_node_by_propval('domain',id))
+			domain = dict(neo.get_node_by_propval('domain',id.capitalize()))
 		articles = neo.get_domain_articles(domain['domain'])
 		domain['nArticles'] = len(articles)
 		domain['articles'] = articles

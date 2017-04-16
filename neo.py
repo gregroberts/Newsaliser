@@ -18,6 +18,7 @@ def get_node(_id):
 	''', {'nid':int(_id)}))[0]['n']
 
 def get_node_by_propval(prop, val):
+    print prop,val
     return list(session.run('''
     MATCH (n)
     WHERE n.%s = {nid}
