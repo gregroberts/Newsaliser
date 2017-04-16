@@ -17,6 +17,13 @@ def get_node(_id):
 	return n
 	''', {'nid':int(_id)}))[0]['n']
 
+def get_node_by_propval(prop, val):
+    return list(session.run('''
+    MATCH (n)
+    WHERE n.%s = {nid}
+    return n
+    ''' % prop, {'nid':val}))[0]['n']
+
 def get_nodes(_type, limit = 10, order = 'time'):
     return map(itemgetter('n'),session.run('''
         MATCH (n:%s)

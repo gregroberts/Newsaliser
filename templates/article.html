@@ -1,15 +1,17 @@
 <!doctype html>
 <title>Newsaliser</title>
 <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
-<style type="text/css">
-#articleText{
-  display:none;
-}
-</style>
+<script
+        src="https://code.jquery.com/jquery-3.2.1.js"
+        integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+        crossorigin="anonymous"></script>
+
 <div class=page>
   <h1>{{title}}</h1>
-  <h2>{{domain}}</h2>
+  <h2><a href="/domains/{{domain}}">{{domain}}</h2></a>
   Author: <em>{{author}}</em> - {{date}}
+  <br/>
+  <button id="merge">Update Article?</button>
   <br>
   Topics:
   <ul> {% for topic in topics %}
@@ -32,11 +34,22 @@
   Original Link: <a href="{{url}}"> {{url}}</a>
 </div>
 <script type="text/javascript">
-	var toggle  = document.getElementById("toggle");
-	var content = document.getElementById("articleText");
+$(document).ready(function(){
+  var content = $("#articleText");
+  content.toggle();
+  $('#toggle').on("click", function(){
+    content.toggle();
+  });
+  $("#merge").on("click", function  () {
+    var res = $.post("/articles/",'{{url}}')
+    res.done(function  (data) {
+      alert(data.result);
+      location = location
+    })
+  });
 
-	toggle.addEventListener("click", function(){
 
-	  content.style.display = (content.dataset.toggled ^= 1) ? "block" : "none";
-	}, false);
+
+})
+
 </script>

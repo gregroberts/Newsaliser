@@ -2,9 +2,21 @@ from flask import Flask, request, Response, abort, render_template
 from flask.ext.classy import FlaskView, route
 from json import dumps
 import neo
+from scrape import merge_article
 
 
 class ArticlesView(FlaskView):
+
+	def post(self):
+		url = request.get_data()
+		res ={'result':'Success'}
+		merge_article(url)
+		return Response(
+				response = dumps(res),
+				status = 200,
+				mimetype= 'application/json'
+			)
+
 	def index(self):
 		arts = neo.get_nodes('Article', 10)
 		return render_template(
@@ -15,6 +27,7 @@ class ArticlesView(FlaskView):
 	def get(self, id):
 		art = neo.get_node(id)
 		sources = neo.get_article_sources(art['url'])
+		print sources
 		topics = neo.get_article_topics(art['url'])
 		return render_template(
 			'article.html',
@@ -23,6 +36,8 @@ class ArticlesView(FlaskView):
 			topics=topics,
 			**art
 			)
+
+
 
 class TopicsView(FlaskView):
 	def index(self):
@@ -51,7 +66,10 @@ class DomainsView(FlaskView):
 			)
 
 	def get(self, id):
-		domain = dict(neo.get_node(id).items())
+		try:
+			domain = dict(neo.get_node(id).items())
+		except ValueError:
+			domain = dict(neo.get_node_by_propval('domain',id))
 		articles = neo.get_domain_articles(domain['domain'])
 		domain['nArticles'] = len(articles)
 		domain['articles'] = articles
