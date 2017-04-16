@@ -1,0 +1,17 @@
+<!doctype html>
+<title>Newsaliser</title>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<style type="text/css">
+#articleText{
+  display:none;
+}
+</style>
+<div class=page>
+  <h3>Topics</h3>
+  {% for topic in topics %}
+  	<div>
+    <span><a href="/topics/{{topic.id}}"><em>{{topic.name }}</em></a></span><br/>
+    </div>
+    <hr/>
+  {% endfor %}
+</div>

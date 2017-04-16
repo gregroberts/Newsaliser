@@ -1,0 +1,42 @@
+<!doctype html>
+<title>Newsaliser</title>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<style type="text/css">
+#articleText{
+  display:none;
+}
+</style>
+<div class=page>
+  <h1>{{title}}</h1>
+  <h2>{{domain}}</h2>
+  Author: <em>{{author}}</em> - {{date}}
+  <br>
+  Topics:
+  <ul> {% for topic in topics %}
+  <li> {{topic.score}} - <a href="/topics/{{topic.id}}">{{topic.name}}</a></li>
+  {%endfor%}
+  </ul>
+  No. of Sources: {{nSources}}
+  <hr/>
+	<button id="toggle">Show Text</button>
+	<div id="articleText">{{text}}</div>
+  <hr/>
+  <h3>Sources</h3>
+  {% for source in sources %}
+  	<div>
+    <span><a href="/articles/{{source.id}}">"{{source.citeText}}" - <em>{{ source.title }}</em></a></span><br/>
+    <b>{{source.domain}}</b>  - {{source.author}} - <i>{{source.date}} </i>
+    </div>
+    <hr/>
+  {% endfor %}
+  Original Link: <a href="{{url}}"> {{url}}</a>
+</div>
+<script type="text/javascript">
+	var toggle  = document.getElementById("toggle");
+	var content = document.getElementById("articleText");
+
+	toggle.addEventListener("click", function(){
+
+	  content.style.display = (content.dataset.toggled ^= 1) ? "block" : "none";
+	}, false);
+</script>

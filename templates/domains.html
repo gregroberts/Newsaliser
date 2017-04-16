@@ -1,0 +1,16 @@
+<!doctype html>
+<title>Newsaliser</title>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<style type="text/css">
+
+</style>
+<div class=page>
+  <h3>Domains</h3>
+  {% for domain in domains %}
+  	<div>
+    <span><a href="/domains/{{domain.id}}"><em>{{domain.domain}}</em></a></span><br/>
+    <em> {{domain.articles}} articles</em>
+    </div>
+    <hr/>
+  {% endfor %}
+</div>
