@@ -1,98 +1,124 @@
-import newspaper
+import dateparser
 from urlparse import urlparse,urljoin
-from neo import session
+from db import *
 from rake import rake
+
+import sys
+sys.path.insert(0,'C:\Users\Gerg\Documents\GitHub\python-goose')
+import goose
+
 
 def get_domain(url, indomain = None):
     if indomain != None:
         url = urljoin(indomain, url)
     x = '.'.join(url.replace('www','x').split('.')[:-1])
     return sorted(
-    		urlparse(x).netloc.split('.'),
-	    	key=len,
-	    	reverse=True
-    	)[0].capitalize()
+            urlparse(x).netloc.split('.'),
+            key=len,
+            reverse=True
+        )[0].capitalize()
 
-def consume_article(url, author, date, text,title,  links, topics):
-    domain = get_domain(url)
+def consume_source(url, domain, link):
+    domain = get_domain(link['url'],url)
     session.run('''
-        MERGE (n:Article {url:{url}})
-        SET
-            n.title={title},
-            n.author={author},
-            n.date={date},
-            n.text={text},
-            n.domain={domain}
+        MATCH (n:Article {url:{url}})
+        MERGE (m:Article {url:{lurl}})
+        ON CREATE SET m.domain={domain}
+        WITH n,m
+        MERGE (n)-[:CITES {text:{text}}]->(m)
+        WITH m
+        MATCH (d:Domain {name:{domain}})
+        MERGE (m)-[:FROM]->(d)
     ''', {
-        'title':title,
         'url':url,
-        'author':author,
-        'date':date,
-        'text':text,
+        'lurl':link['url'],
+        'text':link['text'],
         'domain':domain
     }).consume()
+    
+def consume_topic(url, topic):
+    session.run('''
+        MATCH (n:Article {url:{url}})
+        MERGE (m:Topic {name:{topic}})
+        CREATE UNIQUE
+            (n)-[:MENTIONS {score:{score}}]->(m)
+    ''',{'url':url,'topic':topic[0],'score':topic[1]})   
+    
+def consume_article(**kwargs):
+    topics = kwargs.pop('topics',[])
+    links = kwargs.pop('links',[])
+    id=list(session.run('''
+        MERGE (n:Article {url:$map.url})
+        SET
+            n += $map
+        with n
+        merge (m:Domain {domain:$map.domain})
+        MERGE (n)-[:FROM]->(m)
+        return id(n)
+    ''',{'map':kwargs}))[0]['id(n)']
     for link in links:
-    	domain = get_domain(link['url'],url)
-        session.run('''
-            MATCH (n:Article {url:{url}})
-            MERGE (m:Article {url:{lurl}})
-            ON CREATE SET m.domain={domain}
-            with n,m
-            MERGE (n)-[:CITES {text:{text}}]->(m)
-            with m
-            MATCH (d:Domain {name:{domain}})
-            merge (m)-[:FROM]->(d)
-        ''', {
-            'url':url,
-            'lurl':link['url'],
-            'text':link['text'],
-            'domain':domain
-        }).consume()
+        consume_source(kwargs['url'], kwargs['url'], link)
     for topic in topics:
-    	session.run('''
-	        MATCH (n:Article {url:{url}})
-	        MERGE (m:Topic {name:{topic}})
-	        CREATE UNIQUE
-	            (n)-[:MENTIONS {score:{score}}]->(m)
-	    ''',{'url':url,'topic':topic[0],'score':topic[1]})
-
-    return list(session.run('''
-            MATCH (n:Article {url:{url}})
-            return id(n)
-        ''', {
-            'url':url,
-        }))[0]['id(n)']
+        consume_topic(kwargs['url'], topic)
+    return id
 
 def parse_text(text):
-	return rake.rake(text)
+    return [(i[0], int(i[1])) for i in rake.rake(text)]
+
+
+def scrape_article(url):
+    article = get_article(url=url)
+    g = goose.Goose()
+    if article == None:
+        article = g.extract(url)
+        new = True
+    else:
+        article = g.extract(raw_html=article[3])
+        new = False
+        print 'hit!'
+    return article, new
+
+
 
 def parse_article(url):
-    a = newspaper.Article(url)
-    a.download()
-    a.parse()
-    try:
-        date=a.publish_date.strftime('%Y-%m-%d')
-    except:
-        date = 'Unknown'
-    topics = parse_text(a.text)
+    a, new = scrape_article(url)
+    authors = ','.join(a.authors)
+    date = dateparser.parse(a.publish_date or '')
+    title= a.title
+    text = a.cleaned_text
+    html = a.raw_html
+    domain = get_domain(url)
+    links = filter(lambda x:len(x['url'])>2 and x['text'] != '', [
+        {'url':urljoin(url, ''.join(x.xpath('./@href')) ),
+         'text':''.join(x.xpath('./text()')).replace('\n','').replace('\t','').strip()
+        } 
+        for x in a.doc.xpath('.//a')
+    ])
+    topics = parse_text(text)
     return {
         'url':url,
-        'author':','.join(a.authors),
-        'date':date,
-        'text':a.text,
-        'title':a.title,
-        'links':[{'url':''.join(x.xpath('./@href')),'text':''.join(x.xpath('./text()'))} for x in a.clean_top_node.xpath('//a')],
-        'topics':topics
-    }
+        'author':authors,
+        'date':str(date),
+        'text':text.replace('. ','.\n '),
+        'title':title,
+        'links':links,
+        'topics':topics,
+        'html':html,
+        'domain':domain
+    }, new
 
 def merge_article(article):
-    print article
     if type(article) is list:
-    	article = article[0]
-    data = parse_article(article)
+        article = article[0]
+    data, new = parse_article(article)
+    text = data.pop('text')
+    html = data.pop('html')
     if data != None:
-        return consume_article(
+        id =  consume_article(
             **data
         )
+        if new:
+            insert_article(id, article, html, text)
+        return id
     else:
-    	raise Exception('Failed to merge article')
+        raise Exception('Failed to merge article')

@@ -1,7 +1,7 @@
 from flask import Flask, request, Response, abort, render_template
 from flask.ext.classy import FlaskView, route
 from json import dumps
-import neo
+import db
 from scrape import merge_article
 
 
@@ -21,16 +21,17 @@ class ArticlesView(FlaskView):
 			)
 
 	def index(self):
-		arts = neo.get_nodes('Article', 10)
+		arts = db.get_nodes('Article', 10, order='title')
 		return render_template(
 			'articles.html',
 			articles=arts
 			)
 
 	def get(self, id):
-		art = neo.get_node(id)
-		sources = neo.get_article_sources(art['url'])
-		topics = neo.get_article_topics(art['url'])
+		art = dict(db.get_node(id).items())
+		sources = db.get_article_sources(art['url'])
+		topics = db.get_article_topics(art['url'])
+		art['text'] = art.get('text','') or db.get_article_text(id)
 		return render_template(
 			'article.html',
 			sources=sources,
@@ -43,15 +44,15 @@ class ArticlesView(FlaskView):
 
 class TopicsView(FlaskView):
 	def index(self):
-		topics = neo.get_nodes('Topic',order='name',limit=10)
+		topics = db.get_nodes('Topic',order='name',limit=10)
 		return render_template(
 			'topics.html',
 			topics=topics
 			)
 
 	def get(self, id):
-		topic = neo.get_node(id)
-		articles = neo.get_topic_articles(topic['name'])
+		topic = db.get_node(id)
+		articles = db.get_topic_articles(topic['name'])
 		return render_template(
 			'topic.html',
 			articles=articles,
@@ -60,7 +61,7 @@ class TopicsView(FlaskView):
 
 class DomainsView(FlaskView):
 	def index(self):
-		domains = neo.get_nodes('Domain',order='articles',  limit=100)
+		domains = db.get_nodes('Domain',order='articles',  limit=100)
 		return render_template(
 			'domains.html',
 			domains=domains
@@ -68,10 +69,10 @@ class DomainsView(FlaskView):
 
 	def get(self, id):
 		try:
-			domain = dict(neo.get_node(id).items())
+			domain = dict(db.get_node(id).items())
 		except ValueError:
-			domain = dict(neo.get_node_by_propval('domain',id.capitalize()))
-		articles = neo.get_domain_articles(domain['domain'])
+			domain = dict(db.get_node_by_propval('domain',id.capitalize()))
+		articles = db.get_domain_articles(domain['domain'])
 		domain['nArticles'] = len(articles)
 		domain['articles'] = articles
 		return render_template(
