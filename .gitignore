@@ -26,3 +26,6 @@ pip-log.txt
 user_agents.json
 *.db
 *.rar
+
+
+config.py
