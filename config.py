@@ -1,4 +1,4 @@
-impost os
+import os
 
 try:
 	from local_config import *
