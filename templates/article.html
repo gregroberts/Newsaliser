@@ -5,51 +5,77 @@
         src="https://code.jquery.com/jquery-3.2.1.js"
         integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
         crossorigin="anonymous"></script>
-
-<div class=page>
+<div id="loader"></div>
+<div class="container">
+  <div class="row">
   <h1>{{title}}</h1>
   <h2><a href="/domains/{{domain}}">{{domain}}</h2></a>
-  Author: <em>{{author}}</em> - {{date}}
-  <br/>
-  <button id="merge">Update Article?</button>
+  <p><em>Author: </em>{{author}}</p>
+  <p><em>Date Published: </em> - {{date}}</p>
+  <p><em>Original Link: </em><a href="{{url}}"> {{url}}</a></p>
+  <p><em>No. of Sources:</em> {{nSources}}</p>
+  <button class="btn btn-primary" id="merge">Update Article?</button>
   <br>
-  Topics:
-  <ul> {% for topic in topics %}
-  <li> {{topic.score}} - <a href="/topics/{{topic.id}}">{{topic.name}}</a></li>
-  {%endfor%}
-  </ul>
-  No. of Sources: {{nSources}}
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Topics:</h3>
+    </div>
+    <div class="panel-body">
+      {% for topic in topics %}
+      <span><i><a href="/topics/{{topic.id}}">{{topic.name}}</a></i> ({{topic.score}}), </span>
+      {%endfor%}
+    </div>
+  </div>
+	<button class="btn btn-primary" id="toggle">Show Text</button>
+  <div class="panel panel-default" id="articleText">
+    <div class="panel-heading">
+      <h3 class="panel-title">Article Text:</h3>
+    </div>
+    <div class="panel-body">
+      {{text}}
+    </div>
+  </div>
   <hr/>
-	<button id="toggle">Show Text</button>
-	<div id="articleText">{{text}}</div>
-  <hr/>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Sources:</h3>
+    </div>
+    <div class="panel-body">
   <h3>Sources</h3>
   {% for source in sources %}
-  	<div>
+    <div>
     <span><a href="/articles/{{source.id}}">"{{source.citeText}}" - <em>{{ source.title }}</em></a></span><br/>
     <b>{{source.domain}}</b>  - {{source.author}} - <i>{{source.date}} </i>
     </div>
     <hr/>
   {% endfor %}
-  Original Link: <a href="{{url}}"> {{url}}</a>
+
+  </div>
 </div>
+
+
+
 <script type="text/javascript">
 $(document).ready(function(){
+  function mkLoad(){
+        $('#loader').html('<img src=/static/img/SPINNAZ.gif />');
+  }
+  function unLoad(){
+    $('#loader').html('');
+  }  
   var content = $("#articleText");
   content.toggle();
   $('#toggle').on("click", function(){
     content.toggle();
   });
   $("#merge").on("click", function  () {
+    mkLoad()
     var res = $.post("/articles/",'{{url}}')
     res.done(function  (data) {
+      unLoad();
       alert(data.result);
       location = '/articles/' + data.id
     })
   });
-
-
-
 })
-
 </script>

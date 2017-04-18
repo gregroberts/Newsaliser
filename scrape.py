@@ -69,7 +69,8 @@ def parse_text(text):
 def scrape_article(url):
     article = get_article(url=url)
     g = goose.Goose()
-    if article == None:
+    if article == None or len(article) ==0:
+        print 'url',url
         article = g.extract(url)
         new = True
     else:

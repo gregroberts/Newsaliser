@@ -61,7 +61,7 @@ class TopicsView(FlaskView):
 
 class DomainsView(FlaskView):
 	def index(self):
-		domains = db.get_nodes('Domain',order='articles',  limit=100)
+		domains = db.get_nodes('Domain',order='domain',  limit=100)
 		return render_template(
 			'domains.html',
 			domains=domains
