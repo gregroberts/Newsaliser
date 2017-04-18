@@ -10,6 +10,7 @@ def get_rc():
     redis_conn = StrictRedis(
             host = REDIS_HOST,
             port = REDIS_PORT,
+            password = REDIS_PW,
             decode_responses=True
     )
     return redis_conn

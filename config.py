@@ -20,3 +20,4 @@ except:
 	url = _up.urlparse(os.environ['REDISTOGO_URL'])
 	REDIS_HOST= url.hostname
 	REDIS_PORT= url.port
+	REDIS_PW = url.password
