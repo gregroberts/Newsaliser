@@ -119,11 +119,4 @@ def index():
 	return '<h1>Hello World</h1>'
 
 if __name__ == '__main__':
-	def internal_error(e):
-		print e
-		return Response(
-			response =dumps({'error':str(e)}),
-			status = 500,
-			mimetype = 'application/json'
-		)
 	app.run(host='0.0.0.0', debug=True)
