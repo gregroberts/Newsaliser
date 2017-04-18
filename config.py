@@ -6,9 +6,9 @@ try:
 	from local_config import *
 except:
 
-	NEO4J_URL = os.environs['GRAPHENEDB_BOLT_URL']
-	NEO4J_USER= os.environs['GRAPHENEDB_BOLT_USER']
-	NEO4J_PW= os.environs['GRAPHENEDB_BOLT_PASSWORD']
+	NEO4J_URL = os.environ['GRAPHENEDB_BOLT_URL']
+	NEO4J_USER= os.environ['GRAPHENEDB_BOLT_USER']
+	NEO4J_PW= os.environ['GRAPHENEDB_BOLT_PASSWORD']
 
 	url = urlparse.urlparse(os.environ['DATABASE_URL'])
 	POSTGRES_DB = url.path[1:]
