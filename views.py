@@ -114,6 +114,10 @@ def internal_error(e):
 		mimetype = 'application/json'
 	)
 
+@app.route('/')
+def index():
+	return '<h1>Hello World</h1>'
+
 if __name__ == '__main__':
 	def internal_error(e):
 		print e
