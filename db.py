@@ -212,5 +212,5 @@ if __name__ == '__main__':
                 html TEXT
             )
     ''')
-    conn.commit()
+    pgconn.commit()
 
