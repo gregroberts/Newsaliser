@@ -1,5 +1,5 @@
 import os
-import urlparse
+import urlparse as _up
 
 
 try:
@@ -10,13 +10,13 @@ except:
 	NEO4J_USER= os.environ['GRAPHENEDB_BOLT_USER']
 	NEO4J_PW= os.environ['GRAPHENEDB_BOLT_PASSWORD']
 
-	url = urlparse.urlparse(os.environ['DATABASE_URL'])
+	url = _up.urlparse(os.environ['DATABASE_URL'])
 	POSTGRES_DB = url.path[1:]
 	POSTGRES_USER = url.username
 	POSTGRES_PW = url.password
 	POSTGRES_URL = url.hostname
 	POSTGRES_PORT = url.port
 
-	url = urlparse.urlparse(os.environ['REDISTOGO_URL'])
+	url = _up.urlparse(os.environ['REDISTOGO_URL'])
 	REDIS_HOST= url.hostname
 	REDIS_PORT= url.port
