@@ -28,4 +28,4 @@ user_agents.json
 *.rar
 
 
-config.py
+local_config.py
