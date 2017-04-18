@@ -14,6 +14,7 @@
   <p><em>Date Published: </em> - {{date}}</p>
   <p><em>Original Link: </em><a href="{{url}}" target="_blank"> {{url}}</a></p>
   <p><em>No. of Sources:</em> {{nSources}}</p>
+  <p><em>No. of Citations:</em> {{nCitations}}</p>
   <button class="btn btn-primary" id="merge">Update Article?</button>
   <br>
   <div class="panel panel-default">
@@ -41,10 +42,9 @@
       <h3 class="panel-title">Sources:</h3>
     </div>
     <div class="panel-body">
-  <h3>Sources</h3>
   {% for source in sources %}
     <div>
-    <span><a href="/articles/{{source.id}}">"{{source.citeText}}" - <em>{{ source.title }}</em></a></span><br/>
+    <span><a href="/articles/{{source.id}}">"{{source.citeText}}" - <em>{{ source.url }}</em></a></span><br/>
     <b>{{source.domain}}</b>  - {{source.author}} - <i>{{source.date}} </i>
     </div>
     <hr/>
@@ -52,7 +52,21 @@
 
   </div>
 </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Citations:</h3>
+    </div>
+    <div class="panel-body">
+  {% for citation in citations %}
+    <div>
+    <span><a href="/articles/{{citation.id}}">"{{citation.citeText}}" - <em>{{ citation.url }}</em></a></span><br/>
+    <b>{{citation.domain}}</b>  - {{citation.author}} - <i>{{citation.date}} </i>
+    </div>
+    <hr/>
+  {% endfor %}
 
+  </div>
+</div>
 
 
 <script type="text/javascript">

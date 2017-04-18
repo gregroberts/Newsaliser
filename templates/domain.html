@@ -7,6 +7,26 @@
   <em> {{nArticles}} articles</em>
   <div class="panel panel-default">
     <div class="panel-heading">
+      <h3 class="panel-title">Most frequently cited sources:</h3>
+    </div>
+    <div class="panel-body">
+      {% for source in sources %}
+      <span><i><a href="/domains/{{source.id}}">{{source.citedDomain}}</a></i> ({{source.articles}}), </span>
+      {%endfor%}
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Sites most Frequently citing {{domain}}:</h3>
+    </div>
+    <div class="panel-body">
+      {% for source in citers %}
+      <span><i><a href="/domains/{{source.id}}">{{source.citingDomain}}</a></i> ({{source.articles}}), </span>
+      {%endfor%}
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
       <h3 class="panel-title">Articles:</h3>
     </div>
     <div class="panel-body">

@@ -1,7 +1,7 @@
 from flask import Flask, request, Response, abort, render_template
 from flask.ext.classy import FlaskView, route
 from json import dumps
-import db
+import db, stats
 from scrape import merge_article
 
 
@@ -30,18 +30,25 @@ class ArticlesView(FlaskView):
 	def get(self, id):
 		art = dict(db.get_node(id).items())
 		sources = db.get_article_sources(art['url'])
+		citations = db.get_article_citations(art['url'])
 		topics = db.get_article_topics(art['url'])
 		art['text'] = db.get_article_text(id=int(id))
-		print art['text']
 		return render_template(
 			'article.html',
 			sources=sources,
+			citations = citations,
+			nCitations=len(citations),
 			nSources=len(sources),
 			topics=topics,
 			**art
 			)
 
-
+	def search(self, query):
+		results = db.search_nodes('Article','title',query)
+		return render_template(
+			'articles.html',
+			articles=results
+			)
 
 class TopicsView(FlaskView):
 	def index(self):
@@ -74,10 +81,14 @@ class DomainsView(FlaskView):
 		except ValueError:
 			domain = dict(db.get_node_by_propval('domain',id.capitalize()))
 		articles = db.get_domain_articles(domain['domain'])
+		sources = stats.get_domain_sources(domain['domain'])
+		citers = stats.get_domain_citers(domain['domain'])
 		domain['nArticles'] = len(articles)
 		domain['articles'] = articles
 		return render_template(
 			'domain.html',
+			sources=sources,
+			citers = citers,
 			**domain
 			)
 

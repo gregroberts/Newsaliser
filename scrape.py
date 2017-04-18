@@ -63,7 +63,10 @@ def consume_article(**kwargs):
     return id
 
 def parse_text(text):
-    return [(i[0], int(i[1])) for i in rake.rake(text)]
+    return filter(
+            lambda x: x[1] > 1,
+            [(i[0], int(i[1])) for i in rake.rake(text)]
+        )
 
 
 def scrape_article(url):
@@ -87,15 +90,9 @@ def parse_article(url):
     date = dateparser.parse(a.publish_date or '')
     title= a.title
     text = a.cleaned_text
-    print a.cleaned_text
     html = a.raw_html
     domain = get_domain(url)
-    links = filter(lambda x:len(x['url'])>2 and x['text'] != '', [
-        {'url':urljoin(url, ''.join(x.xpath('./@href')) ),
-         'text':''.join(x.xpath('./text()')).replace('\n','').replace('\t','').strip()
-        } 
-        for x in a.doc.xpath('.//a')
-    ])
+    links = a.links
     topics = parse_text(text)
     return {
         'url':url,

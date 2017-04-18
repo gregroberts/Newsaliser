@@ -106,22 +106,42 @@ def get_nodes(_type, limit = 10, order = 'time'):
         limit {limit}
         ''' %( _type, order, order, order), {'limit':limit}))
 
+def search_nodes(_type, field, term, limit = 100, order = 'date'):
+    regx='(?i).*'+term+'.*'
+    return map(itemgetter('n'),session.run('''
+        MATCH (n:%s)
+        where n.%s =~ '%s'
+        return n 
+        order by n.%s desc
+        limit {limit}
+        ''' %( _type, field,regx, order), {'limit':limit}))
+
 def get_article_sources(url):
     return list(session.run('''
-        MATCH (n:Article {url:{url}})-[r:CITES]->(a)
-        optional match  ()-[inin:CITES]->(a)
-        optional match  (a)-[out:CITES]->() 
-        return 
+        MATCH (n:Article {url:{url}})-[r:CITES]->(a:Article)
+        return distinct
         	r.text as citeText, 
         	a.title as title,
             a.url as url,
             id(a) as id,
             a.date as date,
             a.author as author,
-            a.domain as domain,
-        	count(distinct out) as cites,
-        	count(distinct inin) as cited
+            a.domain as domain
         ''', {'url':url}))
+
+def get_article_citations(url):
+    return list(session.run('''
+        MATCH (n:Article {url:{url}})<-[r:CITES]-(a:Article)
+        return distinct
+            r.text as citeText, 
+            a.title as title,
+            a.url as url,
+            id(a) as id,
+            a.date as date,
+            a.author as author,
+            a.domain as domain
+        ''', {'url':url}))
+
 
 def get_article_topics(url):
     return list(session.run('''
