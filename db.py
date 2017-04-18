@@ -200,4 +200,17 @@ def rq_add_job(func, kwargs, queue = 'default'):
     return j
 
 if __name__ == '__main__':
-    print get_nodes('Article')
+    pgconn = get_pgconn()
+    c = pgconn.cursor()
+    c.execute('''
+        CREATE TABLE 
+            articles
+            (
+                id INT PK,
+                url TEXT,
+                text TEXT,
+                html TEXT
+            )
+    ''')
+    conn.commit()
+    
