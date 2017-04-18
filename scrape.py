@@ -2,10 +2,6 @@ import dateparser
 from urlparse import urlparse,urljoin
 from db import *
 from rake import rake
-import sys
-import os
-goose_dir = '\\'.join(os.getcwd().split('\\')[:-1])+'\\python-goose'
-sys.path.insert(0,goose_dir)
 import goose
 
 
@@ -73,7 +69,7 @@ def consume_article(**kwargs):
 def parse_text(text):
     return filter(
             lambda x: x[1] > 1,
-            [(i[0], int(i[1])) for i in rake.rake(text)]
+            [(i[0], int(i[1])) for i in [('',0)]]#rake.rake(text)]
         )
 
 
