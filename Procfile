@@ -1,3 +1,1 @@
-web: gunicorn wsgi:app  --log-file=-
-
-heroku ps:scale web=1
+web: gunicorn wsgi:app   --preload --workers 1 --log-file=- 

@@ -7,7 +7,6 @@ from redis import StrictRedis
 
 
 def get_rc():
-
     redis_conn = StrictRedis(
             host = REDIS_HOST,
             port = REDIS_PORT,
