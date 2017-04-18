@@ -2,13 +2,29 @@ from neo4j.v1 import GraphDatabase, basic_auth
 from config import *
 from operator import itemgetter
 import psycopg2
+from rq import Queue
+from redis import StrictRedis
+
+
+def get_rc():
+
+    redis_conn = StrictRedis(
+            host = REDIS_HOST,
+            port = REDIS_PORT,
+    )
+    return redis_conn
 
 driver = GraphDatabase.driver(
     NEO4J_URL, 
     auth=basic_auth(NEO4J_USER, NEO4J_PW)
 )
-session = driver.session() 
 
+class session:
+    @staticmethod
+    def run(sttmnt, params):
+        sesh = driver.session() 
+        return sesh.run(sttmnt, params)
+    
 
 def get_pgconn():
     return psycopg2.connect(host=POSTGRES_URL,port=POSTGRES_PORT,
@@ -178,6 +194,11 @@ def get_domain_articles(domain):
             id(a) as id
         order by  a.time desc
         ''', {'domain':domain})) 
+
+def rq_add_job(func, kwargs, queue = 'default'):
+    q = Queue(name = queue, connection = get_rc())
+    j = q.enqueue(func, kwargs=kwargs, result_ttl=20)
+    return j
 
 if __name__ == '__main__':
     print get_nodes('Article')

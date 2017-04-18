@@ -2,10 +2,10 @@ import dateparser
 from urlparse import urlparse,urljoin
 from db import *
 from rake import rake
-
 import sys
 sys.path.insert(0,'C:\Users\Gerg\Documents\GitHub\python-goose')
 import goose
+
 
 
 def get_domain(url, indomain = None):
@@ -18,7 +18,7 @@ def get_domain(url, indomain = None):
             reverse=True
         )[0].capitalize()
 
-def consume_source(url, domain, link):
+def consume_source(url, link):
     domain = get_domain(link['url'],url)
     session.run('''
         MATCH (n:Article {url:{url}})
@@ -35,6 +35,11 @@ def consume_source(url, domain, link):
         'text':link['text'],
         'domain':domain
     }).consume()
+    rq_add_job(
+        func = merge_article,
+        kwargs = {'article':link['url']},
+        queue='default'
+    )
     
 def consume_topic(url, topic):
     session.run('''
@@ -57,7 +62,8 @@ def consume_article(**kwargs):
         return id(n)
     ''',{'map':kwargs}))[0]['id(n)']
     for link in links:
-        consume_source(kwargs['url'], kwargs['url'], link)
+        if link['url'].startswith('http') and not link['url'].endswith('.pdf'):
+            consume_source(kwargs['url'], link)
     for topic in topics:
         consume_topic(kwargs['url'], topic)
     return id
@@ -85,6 +91,7 @@ def scrape_article(url):
 
 
 def parse_article(url):
+    print url
     a, new = scrape_article(url)
     authors = ','.join(a.authors)
     date = dateparser.parse(a.publish_date or '')
