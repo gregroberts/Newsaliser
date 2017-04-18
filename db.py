@@ -6,7 +6,7 @@ from rq import Queue
 from redis import StrictRedis
 
 
-def get_rc(rc_conn = None):
+def get_rc(redis_conn = None):
     if redis_conn == None:
         redis_conn = StrictRedis(
                 host = REDIS_HOST,
