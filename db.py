@@ -3,17 +3,18 @@ from config import *
 from operator import itemgetter
 import psycopg2
 from rq import Queue
-from redis import StrictRedis
+import redis
 
-
-def get_rc(redis_conn = None):
-    if redis_conn == None:
-        redis_conn = StrictRedis(
-                host = REDIS_HOST,
-                port = REDIS_PORT,
-                password = REDIS_PW,
-                decode_responses=True
-        )
+pool = redis.ConnectionPool(
+        host = REDIS_HOST,
+        port = REDIS_PORT,
+        password = REDIS_PW
+)
+def get_rc():
+    redis_conn = StrictRedis(
+            connection_pool=pool,
+            decode_responses=True
+    )
     return redis_conn
 
 driver = GraphDatabase.driver(
