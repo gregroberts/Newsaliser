@@ -31,7 +31,8 @@ class ArticlesView(FlaskView):
 		art = dict(db.get_node(id).items())
 		sources = db.get_article_sources(art['url'])
 		topics = db.get_article_topics(art['url'])
-		art['text'] = art.get('text','') or db.get_article_text(id)
+		art['text'] = db.get_article_text(id=int(id))
+		print art['text']
 		return render_template(
 			'article.html',
 			sources=sources,

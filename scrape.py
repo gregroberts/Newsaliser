@@ -69,7 +69,7 @@ def parse_text(text):
 def scrape_article(url):
     article = get_article(url=url)
     g = goose.Goose()
-    if article == None or len(article) ==0:
+    if bool(article)==False:
         print 'url',url
         article = g.extract(url)
         new = True
@@ -87,6 +87,7 @@ def parse_article(url):
     date = dateparser.parse(a.publish_date or '')
     title= a.title
     text = a.cleaned_text
+    print a.cleaned_text
     html = a.raw_html
     domain = get_domain(url)
     links = filter(lambda x:len(x['url'])>2 and x['text'] != '', [
@@ -120,6 +121,8 @@ def merge_article(article):
         )
         if new:
             insert_article(id, article, html, text)
+        else:
+            update_article(id, article, html, text)
         return id
     else:
         raise Exception('Failed to merge article')

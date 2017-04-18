@@ -31,6 +31,24 @@ def insert_article(id, url, html, text):
     conn.commit()
     conn.close()
 
+def update_article(id, url, html, text):
+    conn = get_pgconn()
+    c=conn.cursor()
+    c.execute('''
+    UPDATE
+        articles
+    SET
+        url=%s,
+        html=%s,
+        text=%s
+    WHERE 
+        id=%s
+    ;
+    ''', (url,html,text, id))
+    c.close()
+    conn.commit()
+    conn.close()
+
 def get_article(id = None, url = None): 
     if id:
         val, prop = id, 'id'
@@ -56,8 +74,10 @@ def get_article(id = None, url = None):
 
 def get_article_text(id=None, url=None):
     try:
-        return get_article(id, url)[2].decode('ascii',errors='ignore')
-    except:
+        res = get_article(id, url)
+        return res[2].decode('ascii',errors='ignore')
+    except Exception as e:
+        print e
         return ''
 
 def get_node(_id):
@@ -70,7 +90,6 @@ def get_node(_id):
 
 
 def get_node_by_propval(prop, val):
-    print prop,val
     return list(session.run('''
     MATCH (n)
     WHERE n.%s = {nid}
