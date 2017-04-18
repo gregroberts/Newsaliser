@@ -3,7 +3,9 @@ from urlparse import urlparse,urljoin
 from db import *
 from rake import rake
 import sys
-sys.path.insert(0,'C:\Users\Gerg\Documents\GitHub\python-goose')
+import os
+goose_dir = '\\'.join(os.getcwd().split('\\')[:-1])+'\\python-goose'
+sys.path.insert(0,goose_dir)
 import goose
 
 
