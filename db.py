@@ -196,6 +196,7 @@ def get_domain_articles(domain):
 
 def rq_add_job(func, kwargs, queue = 'default'):
     q = Queue(name = queue, connection = get_rc())
+    kwargs = {i: unicode(j) for i, j in kwargs.items()}
     j = q.enqueue(func, kwargs=kwargs, result_ttl=20)
     return j
 
