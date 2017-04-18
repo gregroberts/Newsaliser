@@ -4,8 +4,12 @@ The idea behind this project is ultimately to provide an aggregated view on news
 ## What actually is it?
 It's a web UI with a Neo4J + Postgres backend, which scrapes news articles, looks at the sources and topics present, and provides information about them.
 
+# Deploying
+Can be deployed on heroku with the Postgres, RedisToGo & GrapheneDB add-ons
+
 ## Features TODO
 
+- add front end error handling
 - Better topic extraction
 - Better metadata extraction
 - More statistics on an article/topic/domain level
