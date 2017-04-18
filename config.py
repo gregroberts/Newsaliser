@@ -1,5 +1,5 @@
 import os
-import urllib.parse as urlparse
+import urlparse
 
 
 try:
