@@ -206,7 +206,7 @@ if __name__ == '__main__':
         CREATE TABLE 
             articles
             (
-                id INT PK,
+                id INT,
                 url TEXT,
                 text TEXT,
                 html TEXT
