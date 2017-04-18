@@ -75,7 +75,7 @@ def get_article(id = None, url = None):
     c=conn.cursor() 
     sttmnt = '''
         SELECT 
-            id,url,text, html, modified
+            id,url,text, html
         from 
             articles
         where '''+prop+''' = %s
@@ -213,4 +213,4 @@ if __name__ == '__main__':
             )
     ''')
     conn.commit()
-    
+
