@@ -6,13 +6,14 @@ from rq import Queue
 from redis import StrictRedis
 
 
-def get_rc():
-    redis_conn = StrictRedis(
-            host = REDIS_HOST,
-            port = REDIS_PORT,
-            password = REDIS_PW,
-            decode_responses=True
-    )
+def get_rc(rc_conn = None):
+    if redis_conn == None:
+        redis_conn = StrictRedis(
+                host = REDIS_HOST,
+                port = REDIS_PORT,
+                password = REDIS_PW,
+                decode_responses=True
+        )
     return redis_conn
 
 driver = GraphDatabase.driver(
