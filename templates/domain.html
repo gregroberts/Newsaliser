@@ -32,7 +32,7 @@
     <div class="panel-body">
   {% for article in articles %}
     <div>
-    <span><a href="/articles/{{article.id}}">"{{article.citeText}}" - <em>{{ article.title }}</em></a></span><br/>
+    <span><a href="/articles/{{article.id}}">{{ article.title }}</a></span><br/>
     <b>{{article.domain}}</b>  - {{article.author}} - <i>{{article.date}} </i>
     </div>
     <hr/>

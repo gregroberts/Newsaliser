@@ -1,21 +1,24 @@
 <!doctype html>
 <title>Newsaliser</title>
 <link rel=stylesheet type=text/css href="{{ url_for('static', filename='bootstrap-3.3.5/css/bootstrap.css') }}">
-<div class=page>
-  <h1>{{name}}</h1>
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h3 class="panel-title">Articles:</h3>
-    </div>
-    <div class="panel-body">
-	  {% for article in articles %}
-	  	<div>
-	    	<span>{{article.score}}- <a href="/articles/{{article.id}}"><em>{{ article.title }}</em></a></span>
-	    	<br/>
-	    	<b><a href="/domains/{{article.domain}}">{{article.domain}}</a></b>  - {{article.author}} - <i>{{article.date}} </i>
+<div class="container">
+  <div class="row">
+	  <h1>{{name}}</h1>
+	  <div class="panel panel-default">
+	    <div class="panel-heading">
+	      <h3 class="panel-title">Articles:</h3>
 	    </div>
-	    <hr/>
-	  {% endfor %}
-    </div>
-  </div>
+	    <div class="panel-body">
+		  {% for article in articles %}
+		  	<div>
+		    	<span>{{article.score}}- <a href="/articles/{{article.id}}"><em>{{ article.title }}</em></a></span>
+		    	<br/>
+		    	<b><a href="/domains/{{article.domain}}">{{article.domain}}</a></b>  - {{article.author}} - <i>{{article.date}} </i>
+		    </div>
+		    <hr/>
+		  {% endfor %}
+	    </div>
+	  </div>
+	</div>
+</div>
 </div>

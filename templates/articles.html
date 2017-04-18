@@ -16,6 +16,12 @@
         <button class="btn btn-default" type="button" id="addNew">Add New Article</button>
       </span>
     </div>
+    <div class="input-group">
+      <input type="text" class="form-control" placeholder="Search Term" id="searchArticles">
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="button" id="search">Search for Articles</button>
+      </span>
+    </div>
   </div>
   <br>
 
@@ -54,11 +60,13 @@ $(document).ready(function  () {
       alert(data.result);
       location = '/articles/' + data.id
     })
-
-
+    
 
   });
-
+  $('#search').on('click',function () {
+    var term = $('#searchArticles').val();
+    location = '/articles/search/'+term
+  })
 })
 </script>
 

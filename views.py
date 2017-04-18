@@ -67,6 +67,13 @@ class TopicsView(FlaskView):
 			**topic
 			)
 
+	def search(self, query):
+		results = db.search_nodes('Topic','name',query)
+		return render_template(
+			'topics.html',
+			topics=results
+			)
+
 class DomainsView(FlaskView):
 	def index(self):
 		domains = db.get_nodes('Domain',order='domain',  limit=100)

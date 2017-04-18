@@ -1,10 +1,22 @@
 <!doctype html>
 <title>Newsaliser</title>
+<script
+        src="https://code.jquery.com/jquery-3.2.1.js"
+        integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+        crossorigin="anonymous"></script>
+
 <link rel=stylesheet type=text/css href="{{ url_for('static', filename='bootstrap-3.3.5/css/bootstrap.css') }}">
-<div class=page>
 
 <div class="container">
   <h1> Topics</h1>
+     <div class="input-group">
+      <input type="text" class="form-control" placeholder="Search Term" id="searchTopics">
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="button" id="search">Search for Topics</button>
+      </span>
+    </div>
+   <div class="row">
+
   <div class="row">
   {% for topic in topics %}
   <div class="panel panel-default">
@@ -15,3 +27,13 @@
   {% endfor %}
 </div>
 </div>
+</div>
+<script type="text/javascript">
+$(document).ready(function  () {
+  $('#search').on('click',function () {
+    var term = $('#searchTopics').val();
+    location = '/topics/search/'+term
+  })
+})
+</script>
+
