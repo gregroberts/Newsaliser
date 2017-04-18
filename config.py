@@ -1,18 +1,22 @@
 import os
+import urllib.parse as urlparse
+
 
 try:
 	from local_config import *
 except:
 
-	NEO4J_URL = os.environ.get("NEO4J_URL","")
-	NEO4J_USER= os.environ.get("NEO4J_USER","")
-	NEO4J_PW= os.environ.get("NEO4J_PW","")
+	NEO4J_URL = os.environs['GRAPHENEDB_BOLT_URL']
+	NEO4J_USER= os.environs['GRAPHENEDB_BOLT_USER']
+	NEO4J_PW= os.environs['GRAPHENEDB_BOLT_PASSWORD']
 
-	POSTGRES_URL= os.environ.get("POSTGRES_URL","")
-	POSTGRES_PORT= os.environ.get("POSTGRES_PORT","")
-	POSTGRES_USER= os.environ.get("POSTGRES_USER","")
-	POSTGRES_PW= os.environ.get("POSTGRES_PW","")
-	POSTGRES_DB= os.environ.get("POSTGRES_DB","")
+	url = urlparse.urlparse(os.environ['DATABASE_URL'])
+	POSTGRES_DB = url.path[1:]
+	POSTGRES_USER = url.username
+	POSTGRES_PW = url.password
+	POSTGRES_URL = url.hostname
+	POSTGRES_PORT = url.port
 
-	REDIS_HOST= os.environ.get("REDIS_HOST","")
-	REDIS_PORT= os.environ.get("REDIS_PORT","")
+	url = urlparse.urlparse(os.environ['REDISTOGO_URL'])
+	REDIS_HOST= url.hostname
+	REDIS_PORT= url.port
