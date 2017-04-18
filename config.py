@@ -4,7 +4,7 @@ try:
 	from local_config import *
 except:
 
-	NEO4J_URL  os.environ.get("NEO4J_URL","")
+	NEO4J_URL = os.environ.get("NEO4J_URL","")
 	NEO4J_USER= os.environ.get("NEO4J_USER","")
 	NEO4J_PW= os.environ.get("NEO4J_PW","")
 
