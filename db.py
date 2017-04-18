@@ -11,7 +11,7 @@ pool = redis.ConnectionPool(
         password = REDIS_PW
 )
 def get_rc():
-    redis_conn = StrictRedis(
+    redis_conn = redis.StrictRedis(
             connection_pool=pool,
             decode_responses=True
     )
