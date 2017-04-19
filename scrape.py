@@ -120,7 +120,7 @@ def merge_article(article):
             for i in data['links']:
                 rq_add_job(
                     func = merge_article,
-                    kwargs = {'article':link['url']},
+                    kwargs = {'article':i['url']},
                     queue='default'
                 )
         else:
