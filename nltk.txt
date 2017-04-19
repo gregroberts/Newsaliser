@@ -1,2 +1,3 @@
 stopwords
 maxent_treebank_pos_tagger
+corpora/wordnet
