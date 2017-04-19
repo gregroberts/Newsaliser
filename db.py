@@ -214,7 +214,8 @@ if __name__ == '__main__':
                 id INT,
                 url TEXT,
                 text TEXT,
-                html TEXT
+                html TEXT,
+                CONSTRAINT pkid PRIMARY KEY (id)
             )
     ''')
     pgconn.commit()
