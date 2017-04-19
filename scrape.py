@@ -1,7 +1,7 @@
 import dateparser
 from urlparse import urlparse,urljoin
 from db import *
-from rake import rake
+from topics import get_nounphrases
 import goose
 
 
@@ -33,11 +33,7 @@ def consume_source(url, link):
         'text':link['text'],
         'domain':domain
     }).consume()
-    rq_add_job(
-        func = merge_article,
-        kwargs = {'article':link['url']},
-        queue='default'
-    )
+
     
 def consume_topic(url, topic):
     session.run('''
@@ -67,10 +63,8 @@ def consume_article(**kwargs):
     return id
 
 def parse_text(text):
-    return filter(
-            lambda x: x[1] > 1,
-            [(i[0], int(i[1])) for i in [('',0)]]#rake.rake(text)]
-        )
+    return get_nounphrases(text)
+
 
 
 def scrape_article(url):
@@ -123,6 +117,12 @@ def merge_article(article):
         )
         if new:
             insert_article(id, article, html, text)
+            for i in data['links']:
+                rq_add_job(
+                    func = merge_article,
+                    kwargs = {'article':link['url']},
+                    queue='default'
+                )
         else:
             update_article(id, article, html, text)
         return id

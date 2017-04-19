@@ -43,16 +43,17 @@ lxml == 3.3.5
 neo4j_driver == 1.0.0
 
 # goose\text.py: 163
+# topics.py: 1,2
 nltk == 2.0.5
 
 # db.py: 4
 psycopg2 == 2.7.1
 
 # db.py: 6
-redis == 2.10.5
+redis == 2.10.3
 
 # db.py: 5
 rq == 0.5.6
 
-
-beautifulsoup4
+# views.py: 6
+rq_dashboard == 0.3.7

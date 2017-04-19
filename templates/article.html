@@ -87,8 +87,11 @@ $(document).ready(function(){
     var res = $.post("/articles/",'{{url}}')
     res.done(function  (data) {
       unLoad();
-      alert(data.result);
       location = '/articles/' + data.id
+    })
+    res.fail(function  (data) {
+      unLoad();
+      alert(data.error);
     })
   });
 })

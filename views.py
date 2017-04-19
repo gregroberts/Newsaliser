@@ -3,7 +3,7 @@ from flask.ext.classy import FlaskView, route
 from json import dumps
 import db, stats
 from scrape import merge_article
-
+import rq_dashboard
 
 class ArticlesView(FlaskView):
 
@@ -104,6 +104,13 @@ app = Flask(__name__)
 ArticlesView.register(app)
 TopicsView.register(app)
 DomainsView.register(app)
+
+app.config['REDIS_HOST'] = db.REDIS_HOST
+app.config['REDIS_PORT'] = db.REDIS_PORT
+app.config['REDIS_PASSWORD'] = db.REDIS_PW
+app.config['RQ_POLL_INTERVAL'] = 2000
+app.config['APPLICATION_ROOT'] = '/'
+app.register_blueprint(rq_dashboard.blueprint, url_prefix='/redis_queue')
 
 @app.errorhandler(500)
 def internal_error(e):
