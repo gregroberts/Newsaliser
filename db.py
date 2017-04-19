@@ -25,8 +25,9 @@ driver = GraphDatabase.driver(
 class session:
     @staticmethod
     def run(sttmnt, params):
-        sesh = driver.session() 
-        return sesh.run(sttmnt, params)
+        sesh = driver.session()
+        res = sesh.run(sttmnt, params)
+        sesh.close()
     
 
 def get_pgconn():
