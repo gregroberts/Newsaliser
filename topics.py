@@ -2,12 +2,6 @@ import nltk
 from nltk.corpus import stopwords
 from collections import Counter
 
-
-if __name__ == '__main__':
-	#download required corpora
-	nltk.download('stopwords')
-	nltk.download('maxent_treebank_pos_tagger')
-
 try:
     stopwords = stopwords.words('english')
 except:
