@@ -8,7 +8,10 @@ if __name__ == '__main__':
 	nltk.download('stopwords')
 	nltk.download('maxent_treebank_pos_tagger')
 
-stopwords = stopwords.words('english')
+try:
+    stopwords = stopwords.words('english')
+except:
+    stopwords = []
 
 # Used when tokenizing words
 sentence_re = r'''(?x)      # set flag to allow verbose regexps
