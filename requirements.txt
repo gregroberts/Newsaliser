@@ -57,3 +57,6 @@ rq == 0.5.6
 
 # views.py: 6
 rq_dashboard == 0.3.7
+
+
+numpy=1.12.1
