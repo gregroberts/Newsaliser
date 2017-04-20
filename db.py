@@ -28,6 +28,7 @@ class session:
         sesh = driver.session()
         res = sesh.run(sttmnt, params)
         sesh.close()
+        return res
     
 
 def get_pgconn():
