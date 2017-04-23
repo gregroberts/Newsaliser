@@ -121,9 +121,9 @@ def merge_article(article, crawl_depth=0):
             update_article(id, article, html, text)
 
         if crawl_depth <MAX_CRAWL_DEPTH: 
-            links = map(
-                    lambda x: urljoin(x['url'],article).decode('ascii',errors='ignore'), 
-                    data['links'])
+            links = filter(lambda x: x, map(
+                    lambda x: urljoin(article, x['url']).decode('ascii',errors='ignore'), 
+                    data['links']))
             for i in set(links):
                 rq_add_job(
                     func = merge_article,
