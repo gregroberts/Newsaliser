@@ -116,16 +116,17 @@ def merge_article(article, crawl_depth=0):
             **data
         )
         if new:
-            insert_article(id, article, html, text)
-            
-                
+            insert_article(id, article, html, text)                
         else:
             update_article(id, article, html, text)
         if crawl_depth <MAX_CRAWL_DEPTH: 
             for i in data['links']:
                 rq_add_job(
                     func = merge_article,
-                    kwargs = {'article':urljoin(i['url'],article), 'crawl_depth':crawl_depth + 1},
+                    kwargs = {
+                        'article':urljoin(i['url'],article).decode('ascii',errors='ignore'),
+                        'crawl_depth':crawl_depth + 1
+                    },
                     queue='default'
                 )    
         return id
