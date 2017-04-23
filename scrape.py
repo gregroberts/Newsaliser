@@ -122,7 +122,7 @@ def merge_article(article, crawl_depth=0):
 
         if crawl_depth <MAX_CRAWL_DEPTH: 
             links = filter(lambda x: x, map(
-                    lambda x: urljoin(article, x['url']).decode('ascii',errors='ignore'), 
+                    lambda x: urljoin(article, x['url']).decode('ascii',errors='ignore').split('#')[0], 
                     data['links']))
             for i in set(links):
                 rq_add_job(
