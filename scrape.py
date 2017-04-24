@@ -4,8 +4,7 @@ from db import *
 from topics import get_nounphrases
 import goose
 
-MAX_CRAWL_DEPTH = 3
-
+ 
 def get_domain(url, indomain = None):
     if indomain != None:
         url = urljoin(indomain, url)

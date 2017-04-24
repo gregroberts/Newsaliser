@@ -1,6 +1,8 @@
 import os
 import urlparse as _up
 
+MAX_CRAWL_DEPTH = 3
+
 
 try:
 	from local_config import *

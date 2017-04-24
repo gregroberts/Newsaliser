@@ -17,6 +17,12 @@ def get_rc():
     )
     return redis_conn
 
+def get_pgconn():
+    return psycopg2.connect(host=POSTGRES_URL,port=POSTGRES_PORT,
+                          user=POSTGRES_USER,
+                 password=POSTGRES_PW,
+                 database=POSTGRES_DB)
+
 driver = GraphDatabase.driver(
     NEO4J_URL, 
     auth=basic_auth(NEO4J_USER, NEO4J_PW)
@@ -31,11 +37,7 @@ class session:
         return res
     
 
-def get_pgconn():
-    return psycopg2.connect(host=POSTGRES_URL,port=POSTGRES_PORT,
-                          user=POSTGRES_USER,
-                 password=POSTGRES_PW,
-                 database=POSTGRES_DB)
+
 
 def insert_article(id, url, html, text):
     conn = get_pgconn()
