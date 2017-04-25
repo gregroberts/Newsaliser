@@ -17,6 +17,12 @@ def get_rc():
     )
     return redis_conn
 
+def get_pgconn():
+    return psycopg2.connect(host=POSTGRES_URL,port=POSTGRES_PORT,
+                          user=POSTGRES_USER,
+                 password=POSTGRES_PW,
+                 database=POSTGRES_DB)
+
 driver = GraphDatabase.driver(
     NEO4J_URL, 
     auth=basic_auth(NEO4J_USER, NEO4J_PW)
@@ -25,15 +31,13 @@ driver = GraphDatabase.driver(
 class session:
     @staticmethod
     def run(sttmnt, params):
-        sesh = driver.session() 
-        return sesh.run(sttmnt, params)
+        sesh = driver.session()
+        res = sesh.run(sttmnt, params)
+        sesh.close()
+        return res
     
 
-def get_pgconn():
-    return psycopg2.connect(host=POSTGRES_URL,port=POSTGRES_PORT,
-                          user=POSTGRES_USER,
-                 password=POSTGRES_PW,
-                 database=POSTGRES_DB)
+
 
 def insert_article(id, url, html, text):
     conn = get_pgconn()
@@ -200,7 +204,6 @@ def get_domain_articles(domain):
 
 def rq_add_job(func, kwargs, queue = 'default'):
     q = Queue(name = queue, connection = get_rc())
-    kwargs = {i: j.decode('ascii',errors='ignore') for i, j in kwargs.items()}
     j = q.enqueue(func, kwargs=kwargs, result_ttl=20)
     return j
 

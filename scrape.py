@@ -4,8 +4,7 @@ from db import *
 from topics import get_nounphrases
 import goose
 
-
-
+ 
 def get_domain(url, indomain = None):
     if indomain != None:
         url = urljoin(indomain, url)
@@ -105,7 +104,7 @@ def parse_article(url):
         'domain':domain
     }, new
 
-def merge_article(article):
+def merge_article(article, crawl_depth=0):
     if type(article) is list:
         article = article[0]
     data, new = parse_article(article)
@@ -116,15 +115,23 @@ def merge_article(article):
             **data
         )
         if new:
-            insert_article(id, article, html, text)
-            for i in data['links']:
-                rq_add_job(
-                    func = merge_article,
-                    kwargs = {'article':link['url']},
-                    queue='default'
-                )
+            insert_article(id, article, html, text)                
         else:
             update_article(id, article, html, text)
+
+        if crawl_depth <MAX_CRAWL_DEPTH: 
+            links = filter(lambda x: x, map(
+                    lambda x: urljoin(article, x['url']).decode('ascii',errors='ignore').split('#')[0], 
+                    data['links']))
+            for i in set(links):
+                rq_add_job(
+                    func = merge_article,
+                    kwargs = {
+                        'article':i,
+                        'crawl_depth':crawl_depth + 1
+                    },
+                    queue='default'
+                )    
         return id
     else:
         raise Exception('Failed to merge article')

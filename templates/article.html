@@ -91,7 +91,8 @@ $(document).ready(function(){
     })
     res.fail(function  (data) {
       unLoad();
-      alert(data.error);
+      alert(data.responseJSON.error)
+      console.log(data.responseJSON)
     })
   });
 })

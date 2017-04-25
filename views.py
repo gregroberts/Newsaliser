@@ -4,9 +4,10 @@ from json import dumps
 import db, stats
 from scrape import merge_article
 import rq_dashboard
+from traceback import format_exc
+
 
 class ArticlesView(FlaskView):
-
 	def post(self):
 		url = request.get_data()
 		_id = merge_article(url)
@@ -116,7 +117,7 @@ app.register_blueprint(rq_dashboard.blueprint, url_prefix='/redis_queue')
 def internal_error(e):
 	print e
 	return Response(
-		response =dumps({'error':str(e)}),
+		response =dumps({'error':str(e),'traceback':format_exc()}),
 		status = 500,
 		mimetype = 'application/json'
 	)
