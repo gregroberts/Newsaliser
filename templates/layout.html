@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+  <head>
+    {% block head %}
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='bootstrap-3.3.5/css/bootstrap.css') }}">
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.js"
+      integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+      crossorigin="anonymous" ></script>
+    <title>{% block title %}{% endblock %} - Newsaliser</title>
+    {% endblock %}
+  </head>
+  <body>
+    <div id="loader"></div>
+    <div class="container">
+      <div class="row">
+        <h1>{{title}}</h1>
+        <div id="content">{% block content %}{% endblock %}</div>
+        <div id="footer">
+          {% block footer %}
+          {% endblock %}
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

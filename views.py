@@ -22,11 +22,26 @@ class ArticlesView(FlaskView):
 			)
 
 	def index(self):
-		arts = db.get_nodes('Article', 10, order='title')
+		arts = db.get_nodes('Article', 1000, order='title')
 		return render_template(
 			'articles.html',
 			articles=arts
 			)
+
+	def new(self):
+		arts = db.get_nodes('Article', 12, order='title')
+		#heads = arts[0].keys() if len(arts)>0 else []
+		heads = ['title','date','author','domain','time']
+		get_vals = lambda x: map(lambda i: x[i], heads)
+		results = map(lambda x: get_vals(x), arts)
+		return render_template(
+			'new_articles.html',
+			articles=arts,
+			heads= heads,
+			results=results,
+			searchUrl='articles/search'
+			)		
+
 
 	def get(self, id):
 		art = dict(db.get_node(id).items())

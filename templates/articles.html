@@ -6,6 +6,10 @@
         crossorigin="anonymous"></script>
 
 <link rel=stylesheet type=text/css href="{{ url_for('static', filename='bootstrap-3.3.5/css/bootstrap.min.css') }}">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs-3.3.7/dt-1.10.15/b-1.3.1/b-colvis-1.3.1/sc-1.4.2/datatables.min.css"/>
+ 
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs-3.3.7/dt-1.10.15/b-1.3.1/b-colvis-1.3.1/sc-1.4.2/datatables.min.js"></script>
+
 <div id="loader"></div>
 <div class="container">
   <h1> Articles</h1>
@@ -26,17 +30,26 @@
   <br>
 
   <div class="row">
-  {% for article in articles %}
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h3 class="panel-title"><a href="/articles/{{article.id}}">{{article.title}}</a> - <em>{{article.date}}</h3>
-    </div>
-    <div class="panel-body">
-      <h4>{{article.date}} - {{article.domain}}</h4>
-      Author: <em>{{article.author}}</em>
-    </div>
-  </div>
-    {% endfor %}
+<table id="example" class="display" cellspacing="0" width="100%">
+        <thead>
+          <tr>
+            <th>id</th>
+            <th>title</th>
+            <th>date</th>
+            <th>domain</th>
+            <th>author</th>
+          </tr>
+          <tbody>
+          {% for article in articles %}
+          <tr>
+            <td>{{article.id}}</th>
+            <td><span><a href="/articles/{{article.id}}">{{article.title}}</a></th>
+            <td>{{article.date}}</th>
+            <td>{{article.domain}}</th>
+            <td>{{article.author}}</th>            
+          </tr>
+            {% endfor %}
+    </table>
   </div>
 </div>
 
@@ -50,6 +63,10 @@ $(document).ready(function  () {
   function unLoad(){
     $('#loader').html('');
   }  
+
+    $('#example').DataTable( {
+        "dom": '<"top"iflp<"clear">>rt<"bottom"iflp<"clear">>'
+    } );
   $("#addNew").on("click", function  () {
     mkLoad()
   	var url = $('#newArticle').val();

@@ -1,0 +1,71 @@
+{% extends "layout.html" %}
+{% block head %}
+	{{ super() }}
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs-3.3.7/dt-1.10.15/b-1.3.1/b-colvis-1.3.1/sc-1.4.2/datatables.min.css"/>
+	<script type="text/javascript" src="https://cdn.datatables.net/v/bs-3.3.7/dt-1.10.15/b-1.3.1/b-colvis-1.3.1/sc-1.4.2/datatables.min.js"></script>
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="input-group">
+      <input type="text" class="form-control" placeholder="Search Term" id="searchText">
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="button" id="search">Search</button>
+      </span>
+    </div>
+	  <div class="row">
+	    <table id="example" class="display" cellspacing="0" width="100%">
+          <thead>
+            <tr>
+            	{% for head in heads %}
+            		<th>
+            			{{head}}
+            		</th>
+            	{% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+        	{% for result in results %}
+        		<tr>
+        			{% for column in result %}
+        			<td>{{column}}</td>
+        			{% endfor %}
+        		</tr>
+        	{% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block footer %}
+	<script type="text/javascript">
+		$(document).ready(function  () {
+		  function mkLoad(){
+		        $('#loader').html('<img src=/static/img/SPINNAZ.gif />');
+		  }
+		  function unLoad(){
+		    $('#loader').html('');
+		  }  
+
+		  $('#example').DataTable( {
+		    "dom": '<"top"iflp<"clear">>rt<"bottom"iflp<"clear">>'
+		  } );
+		  $("#addNew").on("click", function  () {
+		    mkLoad()
+		  	var url = $('#newArticle').val();
+		  	console.log(url);
+		    var res = $.post("/articles/",url)
+		    res.done(function  (data) {
+		      unLoad();
+		      alert(data.result);
+		      location = '/articles/' + data.id
+		    })
+		    
+
+		  });
+		  $('#search').on('click',function () {
+		    var term = $('#searchText').val();
+		    location = '/{{searchUrl}}/'+term
+		  })
+		})
+	</script>
+{% endblock %}
