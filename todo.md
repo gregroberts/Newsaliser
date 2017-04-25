@@ -6,7 +6,6 @@
 - use image parsers to get links?
 
 # Templates
-- add a theme
 - switch to modular templates
 
 # Article
