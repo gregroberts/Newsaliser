@@ -23,15 +23,9 @@ class ArticlesView(FlaskView):
 
 	def index(self):
 		arts = db.get_nodes('Article', 1000, order='title')
-		return render_template(
-			'articles.html',
-			articles=arts
-			)
-
-	def new(self):
-		arts = db.get_nodes('Article', 12, order='title')
-		#heads = arts[0].keys() if len(arts)>0 else []
 		heads = ['title','date','author','domain','time']
+		for i in arts:
+			i['title'] = '<a href="/articles/%d">%s</a>' % (i['id'], i['title'])
 		get_vals = lambda x: map(lambda i: x[i], heads)
 		results = map(lambda x: get_vals(x), arts)
 		return render_template(
@@ -41,7 +35,6 @@ class ArticlesView(FlaskView):
 			results=results,
 			searchUrl='articles/search'
 			)		
-
 
 	def get(self, id):
 		art = dict(db.get_node(id).items())

@@ -120,14 +120,19 @@ def get_node_by_propval(prop, val):
     ''' % prop, {'nid':val}))[0]['n']
 
 def get_nodes(_type, limit = 10, order = 'time'):
-    return map(itemgetter('n'),session.run('''
+    res = session.run('''
         MATCH (n:%s)
         where exists(n.%s)
          and n.%s <> 'Unknown'
-        return n 
+        return n, id(n)
         order by n.%s desc
         limit {limit}
-        ''' %( _type, order, order, order), {'limit':limit}))
+    ''' % (_type, order, order, order), {'limit':limit})
+    ret = map(lambda x: dict(x['n'].items()), res)
+    for rett, ress in zip(ret,res):
+        rett['id'] = ress['id(n)']
+    return ret
+
 
 def search_nodes(_type, field, term, limit = 100, order = 'date'):
     regx='(?i).*'+term+'.*'
