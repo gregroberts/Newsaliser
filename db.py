@@ -31,6 +31,7 @@ driver = GraphDatabase.driver(
 class session:
     @staticmethod
     def run(sttmnt, params):
+        print sttmnt
         sesh = driver.session()
         res = sesh.run(sttmnt, params)
         sesh.close()
@@ -72,37 +73,6 @@ def update_article(id, url, html, text):
     conn.commit()
     conn.close()
 
-def get_article(id = None, url = None): 
-    if id:
-        val, prop = id, 'id'
-    elif url:
-        val, prop = url, 'url'
-    else:
-        return []
-    conn = get_pgconn()
-    c=conn.cursor() 
-    sttmnt = '''
-        SELECT 
-            id,url,text, html
-        from 
-            articles
-        where '''+prop+''' = %s
-        ;
-    ''' 
-    c.execute(sttmnt, [val] )
-    res = c.fetchone()
-    c.close()
-    conn.close()
-    return res
-
-def get_article_text(id=None, url=None):
-    try:
-        res = get_article(id, url)
-        return res[2].decode('ascii',errors='ignore')
-    except Exception as e:
-        print e
-        return ''
-
 def get_node(_id):
 	return list(session.run('''
 	MATCH (n)
@@ -119,88 +89,41 @@ def get_node_by_propval(prop, val):
     return n
     ''' % prop, {'nid':val}))[0]['n']
 
-def get_nodes(_type, limit = 10, order = 'time'):
+def get_nodes(_type, limit = 10, order = 'n.time',
+            returnmap={},
+            filtermap=[]):
+    to_return = ', '.join( 
+        map(
+            lambda x: '%s as %s' % x,
+            returnmap.items()
+        )
+    ) or 'n'
+    to_filter = 'and '.join(map(
+            lambda x: ' '.join(x),
+            filtermap
+        )
+    )
+    if to_filter != '':
+        to_filter = ' and ' + to_filter
     return map(itemgetter('n'),session.run('''
         MATCH (n:%s)
-        where exists(n.%s)
-         and n.%s <> 'Unknown'
-        return n 
-        order by n.%s desc
+        where exists(%s)
+         and %s <> 'Unknown'
+         %s
+        return %s
+        order by %s desc
         limit {limit}
-        ''' %( _type, order, order, order), {'limit':limit}))
+        ''' %( _type, order, order, to_filter, to_return, order), {'limit':limit}))
 
-def search_nodes(_type, field, term, limit = 100, order = 'date'):
-    regx='(?i).*'+term+'.*'
-    return map(itemgetter('n'),session.run('''
-        MATCH (n:%s)
-        where n.%s =~ '%s'
-        return n 
-        order by n.%s desc
-        limit {limit}
-        ''' %( _type, field,regx, order), {'limit':limit}))
-
-def get_article_sources(url):
-    return list(session.run('''
-        MATCH (n:Article {url:{url}})-[r:CITES]->(a:Article)
-        return distinct
-        	r.text as citeText, 
-        	a.title as title,
-            a.url as url,
-            id(a) as id,
-            a.date as date,
-            a.author as author,
-            a.domain as domain
-        ''', {'url':url}))
-
-def get_article_citations(url):
-    return list(session.run('''
-        MATCH (n:Article {url:{url}})<-[r:CITES]-(a:Article)
-        return distinct
-            r.text as citeText, 
-            a.title as title,
-            a.url as url,
-            id(a) as id,
-            a.date as date,
-            a.author as author,
-            a.domain as domain
-        ''', {'url':url}))
-
-
-def get_article_topics(url):
-    return list(session.run('''
-        MATCH (n:Article {url:{url}})-[r:MENTIONS]->(a)
-        return 
-            toInt(r.score) as score, 
-            a.name as name,
-            id(a) as id
-        order by score desc
-        ''', {'url':url}))
-
-def get_topic_articles(name):
-    return list(session.run('''
-        MATCH (n:Topic {name:{name}})<-[r:MENTIONS]-(a)
-        return 
-            toInt(r.score) as score, 
-            a.title as title,
-            a.date as date,
-            a.domain as domain,
-            a.author as author,
-            id(a) as id
-        order by score desc, a.time desc
-        ''', {'name':name}))   
-
-def get_domain_articles(domain):
-    return list(session.run('''
-        MATCH (n:Domain {domain:{domain}})<-[r:FROM]-(a:Article)
-        where exists(a.title)
-        return 
-            a.title as title,
-            a.date as date,
-            a.domain as domain,
-            a.author as author,
-            id(a) as id
-        order by  a.time desc
-        ''', {'domain':domain})) 
+def search_nodes(_type, field, term, limit = 100, order = 'n.date'):
+    regx="'(?i).*"+term+".*'"
+    return get_nodes(
+        _type,
+        limit, order, 
+        filtermap=[
+            ('n.%s' % field, '=~', regx),
+            ]
+        )
 
 def rq_add_job(func, kwargs, queue = 'default'):
     q = Queue(name = queue, connection = get_rc())
