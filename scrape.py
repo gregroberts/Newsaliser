@@ -115,7 +115,7 @@ def merge_domain(domain):
     if not 'http:' in domain:
         domain = 'http://' + domain
     paper = newspaper.build(domain)
-    articles = map(lambda x: x.url, filter(lambda x: paper.url in x.url, paper.articles))
+    articles = map(lambda x: x.url, filter(lambda x: paper.url in x.url and paper.url!=x.url, paper.articles))
     print 'Consuming %d Articles' % len(articles)
     for ind, article in enumerate(articles):
         print 'Article ',ind, ' - ',paper.url
