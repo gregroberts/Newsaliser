@@ -28,8 +28,7 @@ class ArticlesView(FlaskView):
 			heads= heads,
 			results=results,
 			searchUrl='articles/search'
-			)		
-
+			)
 
 	def get(self, id):
 		article = models.get_full_article(id=id)
@@ -45,12 +44,14 @@ class ArticlesView(FlaskView):
 			articles=results
 			)
 
+
 class TopicsView(FlaskView):
 	def index(self):
-		topics = models.get_topics()
+		heads, results = models.get_topics()
 		return render_template(
 			'topics.html',
-			topics=topics
+			heads= heads,
+			results=results,
 			)
 
 	def get(self, id):
@@ -66,6 +67,7 @@ class TopicsView(FlaskView):
 			'topics.html',
 			topics=results
 			)
+
 
 class DomainsView(FlaskView):
 	def index(self):
@@ -91,13 +93,13 @@ app = Flask(__name__)
 ArticlesView.register(app)
 TopicsView.register(app)
 DomainsView.register(app)
+app.register_blueprint(rq_dashboard.blueprint, url_prefix='/redis_queue')
 
 app.config['REDIS_HOST'] = models.REDIS_HOST
 app.config['REDIS_PORT'] = models.REDIS_PORT
 app.config['REDIS_PASSWORD'] = models.REDIS_PW
 app.config['RQ_POLL_INTERVAL'] = 2000
 app.config['APPLICATION_ROOT'] = '/'
-app.register_blueprint(rq_dashboard.blueprint, url_prefix='/redis_queue')
 
 @app.errorhandler(500)
 def internal_error(e):
@@ -110,7 +112,8 @@ def internal_error(e):
 
 @app.route('/')
 def index():
-	return '<h1>Hello World</h1>'
-
+	return render_template('index.html',
+		title='Newsaliser'
+		)
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', debug=True)

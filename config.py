@@ -1,7 +1,7 @@
 import os
 import urlparse as _up
 
-MAX_CRAWL_DEPTH = 3
+MAX_CRAWL_DEPTH = 1
 
 
 try:

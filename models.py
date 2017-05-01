@@ -147,8 +147,23 @@ def get_domain_articles(domain):
         ''', {'domain':domain})) 
 
 def get_topics(order='n.name',limit = 100):
-    topics = get_nodes('Topic',order=order,limit=limit)
-    return topics
+    res = list(session.run('''
+        MATCH (n:Topic)
+        MATCH (n)<-[r:MENTIONS]-(:Article)
+        return 
+            n.name as topic,
+            count(distinct r) as articles,
+            id(n) as id
+        order by articles
+        ''', {}))
+    heads = ['topic','articles', 'id']
+    get_vals = lambda x: map(lambda i: x[i], heads)
+    results = map(lambda x: get_vals(x), res) 
+    for i in results:
+        link = '<a href="/topics/%d">' % i[heads.index('id')]
+        link += i[heads.index('topic')] + '</a>'
+        i[heads.index('topic')] = link
+    return heads, results  
 
 def get_full_topic(id):
     topic = get_node(id)

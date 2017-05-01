@@ -124,6 +124,7 @@ if __name__ == '__main__':
                 url TEXT,
                 text TEXT,
                 html TEXT,
+                raw_html TEXT,
                 CONSTRAINT pkid PRIMARY KEY (id)
             )
     ''')

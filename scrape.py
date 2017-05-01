@@ -1,9 +1,10 @@
+from tqdm import tqdm
 import dateparser
 from urlparse import urlparse,urljoin
 from db import *
 from models import get_article_pg
 from topics import get_nounphrases
-import goose
+import goose, newspaper
 from lxml.etree import tostring
 
  
@@ -71,7 +72,6 @@ def scrape_article(url):
 
 
 def parse_article(url):
-    print url
     a = scrape_article(url)
     authors = ','.join(a.authors)
     date = dateparser.parse(a.publish_date or '')
@@ -130,3 +130,17 @@ def merge_article(article, crawl_depth=0):
         return id
     else:
         raise Exception('Failed to merge article')
+
+def merge_domain(domain):
+    if not 'http:' in domain:
+        domain = 'http://' + domain
+    paper = newspaper.build(domain, memoize_articles=False )
+    print 'Consuming %d Articles' % paper.size()
+    for article in tqdm(paper.articles):
+        if paper.url in article.url:
+            merge_article(article.url)
+
+
+
+if __name__ == '__main__':
+    merge_domain('http://cnn.com')
