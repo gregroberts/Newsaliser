@@ -7,7 +7,7 @@ Flask_Classy == 0.6.10
 # goose\utils\images.py: 26
 Pillow == 2.5.1
 
-# scrape.py: 1
+# scrape.py: 2
 dateparser == 0.6.0
 
 # goose\__init__.py: 27,28,29,30
@@ -30,17 +30,21 @@ dateparser == 0.6.0
 # goose\text.py: 26,27,28,29
 # goose\utils\__init__.py: 27
 # goose\utils\images.py: 27,28,29
-# scrape.py: 5
+# scrape.py: 7
 goose_extractor == 1.0.25
 
 # goose\text.py: 147
 jieba == 0.35
 
 # goose\parsers.py: 23,24,25
+# scrape.py: 8
 lxml == 3.3.5
 
 # db.py: 1
 neo4j_driver == 1.0.0
+
+# scrape.py: 7
+newspaper == 0.0.9.8
 
 # goose\text.py: 163
 # topics.py: 1,2
@@ -53,10 +57,15 @@ psycopg2 == 2.7.1
 redis == 2.10.3
 
 # db.py: 5
+# worker.py: 3
 rq == 0.5.6
 
 # views.py: 6
 rq_dashboard == 0.3.7
+
+# scrape.py: 1
+# watch.py: 3
+tqdm == 1.0
 
 
 numpy == 1.12.1

@@ -48,16 +48,12 @@
 # index
 make an index page
 
-# Scrape
-- Change get_domain to just return full host
-
 # stats
 - lots more here
 
 # New Stuff
 - Background tasks to periodically scrape news sites
 - background tasks to update stats and trim graph
-- parser to crawl hub pages
 - background task to stem and join topics together
 	- also run as a cleaner on new topics?
 - implement the pagerank like algo!

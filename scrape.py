@@ -30,7 +30,6 @@ def consume_source(url, link):
         'text':link['text'],
         'domain':domain
     }).consume()
-
     
 def consume_topic(url, topic):
     session.run('''
@@ -63,52 +62,33 @@ def parse_text(text):
     return get_nounphrases(text)
 
 
-
-def scrape_article(url):
-    g = goose.Goose()
-    article = g.extract(url)
-    return article
-
-
-
 def parse_article(url):
-    a = scrape_article(url)
-    authors = ','.join(a.authors)
-    date = dateparser.parse(a.publish_date or '')
-    title= a.title
-    text = a.cleaned_text
-    html = tostring(a.doc)
-    raw_html = a.raw_html
-    domain = get_domain(url)
-    links = a.links
-    topics = parse_text(text)
+    g = goose.Goose()
+    a = g.extract(url) 
     return {
         'url':url,
-        'author':authors,
-        'date':str(date),
-        'text':text.replace('. ','.\n '),
-        'title':title,
-        'links':links,
-        'topics':topics,
-        'html':html,
-        'domain':domain,
-        'raw_html':raw_html
+        'author':','.join(a.authors),
+        'date':str(dateparser.parse(a.publish_date or '')),
+        'text':a.cleaned_text.replace('. ','.\n '),
+        'title':a.title,
+        'links':a.links,
+        'topics':parse_text(a.cleaned_text),
+        'html':tostring(a.doc),
+        'domain':get_domain(url),
+        'raw_html':a.raw_html
     }
 
 def crawl_article_sources(links, crawl_depth = 0):
         if crawl_depth <MAX_CRAWL_DEPTH: 
             for i in set(links):
-                try:
-                    rq_add_job(
-                        func = merge_article,
-                        kwargs = {
-                            'article':i,
-                            'crawl_depth':crawl_depth + 1
-                        },
-                        queue='default'
-                    ) 
-                except:
-                    Warning('Could not contact redis')
+                rq_add_job(
+                    func = merge_article,
+                    kwargs = {
+                        'article':i,
+                        'crawl_depth':crawl_depth + 1
+                    },
+                    queue='default'
+                ) 
 
 def merge_article(article, crawl_depth=0):
     if type(article) is list:
@@ -134,13 +114,13 @@ def merge_article(article, crawl_depth=0):
 def merge_domain(domain):
     if not 'http:' in domain:
         domain = 'http://' + domain
-    paper = newspaper.build(domain, memoize_articles=False )
-    print 'Consuming %d Articles' % paper.size()
-    for article in tqdm(paper.articles):
-        if paper.url in article.url:
+    paper = newspaper.build(domain)
+    articles = map(lambda x: x.url, filter(lambda x: paper.url in x.url, paper.articles))
+    print 'Consuming %d Articles' % len(articles)
+    for article in tqdm(articles):
+        print paper.url
+        try:
             merge_article(article.url)
+        except Exception as e:
+            print e
 
-
-
-if __name__ == '__main__':
-    merge_domain('http://cnn.com')
