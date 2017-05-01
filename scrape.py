@@ -120,7 +120,7 @@ def merge_domain(domain):
     for article in tqdm(articles):
         print paper.url
         try:
-            merge_article(article.url)
+            merge_article(article)
         except Exception as e:
             print e
 
