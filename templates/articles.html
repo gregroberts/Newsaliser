@@ -1,2 +1,11 @@
 {% extends "listLayout.html" %}
 {% block title %}Articles{% endblock %}
+{% block content %}  
+<div class="input-group">
+  <input type="text" class="form-control" placeholder="article URL" id="newArticle">
+  <span class="input-group-btn">
+    <button class="btn btn-default" type="button" id="addNew">Add New Article</button>
+  </span>
+</div>
+{{ super() }}
+{% endblock %}

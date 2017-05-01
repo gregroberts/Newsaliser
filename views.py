@@ -1,7 +1,7 @@
 from flask import Flask, request, Response, abort, render_template
 from flask.ext.classy import FlaskView, route
 from json import dumps
-import db, stats
+import stats, models
 from scrape import merge_article
 import rq_dashboard
 from traceback import format_exc
@@ -22,14 +22,9 @@ class ArticlesView(FlaskView):
 			)
 
 	def index(self):
-		arts = db.get_nodes('Article', 12, order='n.title')
-		#heads = arts[0].keys() if len(arts)>0 else []
-		heads = ['title','date','author','domain','time']
-		get_vals = lambda x: map(lambda i: x[i], heads)
-		results = map(lambda x: get_vals(x), arts)
+		heads, results = models.get_articles()
 		return render_template(
-			'new_articles.html',
-			articles=arts,
+			'articles.html',
 			heads= heads,
 			results=results,
 			searchUrl='articles/search'
@@ -37,23 +32,14 @@ class ArticlesView(FlaskView):
 
 
 	def get(self, id):
-		art = dict(db.get_node(id).items())
-		sources = db.get_article_sources(art['url'])
-		citations = db.get_article_citations(art['url'])
-		topics = db.get_article_topics(art['url'])
-		art['text'] = db.get_article_text(id=int(id))
+		article = models.get_full_article(id=id)
 		return render_template(
 			'article.html',
-			sources=sources,
-			citations = citations,
-			nCitations=len(citations),
-			nSources=len(sources),
-			topics=topics,
-			**art
+			**article
 			)
 
 	def search(self, query):
-		results = db.search_nodes('Article','title',query)
+		results = models.search_nodes('Article','n.title',query)
 		return render_template(
 			'articles.html',
 			articles=results
@@ -61,23 +47,21 @@ class ArticlesView(FlaskView):
 
 class TopicsView(FlaskView):
 	def index(self):
-		topics = db.get_nodes('Topic',order='name',limit=10)
+		topics = models.get_topics()
 		return render_template(
 			'topics.html',
 			topics=topics
 			)
 
 	def get(self, id):
-		topic = db.get_node(id)
-		articles = db.get_topic_articles(topic['name'])
+		topic = models.get_full_topic(id)
 		return render_template(
 			'topic.html',
-			articles=articles,
 			**topic
 			)
 
 	def search(self, query):
-		results = db.search_nodes('Topic','name',query)
+		results = models.search_nodes('Topic','n.name',query)
 		return render_template(
 			'topics.html',
 			topics=results
@@ -85,26 +69,20 @@ class TopicsView(FlaskView):
 
 class DomainsView(FlaskView):
 	def index(self):
-		domains = db.get_nodes('Domain',order='domain',  limit=100)
+		heads, results = models.get_domains()
 		return render_template(
 			'domains.html',
-			domains=domains
+			heads= heads,
+			results=results,
 			)
 
 	def get(self, id):
 		try:
-			domain = dict(db.get_node(id).items())
+			domain = models.get_full_domain(id=id)
 		except ValueError:
-			domain = dict(db.get_node_by_propval('domain',id.capitalize()))
-		articles = db.get_domain_articles(domain['domain'])
-		sources = stats.get_domain_sources(domain['domain'])
-		citers = stats.get_domain_citers(domain['domain'])
-		domain['nArticles'] = len(articles)
-		domain['articles'] = articles
+			domain = models.get_full_domain(domain=id)
 		return render_template(
 			'domain.html',
-			sources=sources,
-			citers = citers,
 			**domain
 			)
 
@@ -114,9 +92,9 @@ ArticlesView.register(app)
 TopicsView.register(app)
 DomainsView.register(app)
 
-app.config['REDIS_HOST'] = db.REDIS_HOST
-app.config['REDIS_PORT'] = db.REDIS_PORT
-app.config['REDIS_PASSWORD'] = db.REDIS_PW
+app.config['REDIS_HOST'] = models.REDIS_HOST
+app.config['REDIS_PORT'] = models.REDIS_PORT
+app.config['REDIS_PASSWORD'] = models.REDIS_PW
 app.config['RQ_POLL_INTERVAL'] = 2000
 app.config['APPLICATION_ROOT'] = '/'
 app.register_blueprint(rq_dashboard.blueprint, url_prefix='/redis_queue')

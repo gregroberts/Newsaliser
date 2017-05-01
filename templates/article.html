@@ -1,14 +1,8 @@
-<!doctype html>
-<title>Newsaliser</title>
-<link rel=stylesheet type=text/css href="{{ url_for('static', filename='bootstrap-3.3.5/css/bootstrap.css') }}">
-<script
-        src="https://code.jquery.com/jquery-3.2.1.js"
-        integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
-        crossorigin="anonymous"></script>
-<div id="loader"></div>
-<div class="container">
-  <div class="row">
-  <h1>{{title}}</h1>
+{% extends "layout.html" %}
+{% block title %}
+{{title}} - {{domain}}
+{% endblock %}
+{% block content %}
   <h2><a href="/domains/{{domain}}">{{domain}}</h2></a>
   <p><em>Author: </em>{{author}}</p>
   <p><em>Date Published: </em> - {{date}}</p>
@@ -16,8 +10,8 @@
   <p><em>No. of Sources:</em> {{nSources}}</p>
   <p><em>No. of Citations:</em> {{nCitations}}</p>
   <button class="btn btn-primary" id="merge">Update Article?</button>
-  <br>
-  <div class="panel panel-default">
+  <button class="btn btn-primary" id="toggleTopics">Show Topics</button>
+  <div class="panel panel-default" id="topics">
     <div class="panel-heading">
       <h3 class="panel-title">Topics:</h3>
     </div>
@@ -27,7 +21,8 @@
       {%endfor%}
     </div>
   </div>
-	<button class="btn btn-primary" id="toggle">Show Text</button>
+
+	<button class="btn btn-primary" id="toggleText">Show Text</button>
   <div class="panel panel-default" id="articleText">
     <div class="panel-heading">
       <h3 class="panel-title">Article Text:</h3>
@@ -36,7 +31,17 @@
       {{text}}
     </div>
   </div>
+  <button class="btn btn-primary" id="toggleContent">Show Original Article</button>
+  <div class="panel panel-default" id="articleContent">
+    <div class="panel-heading">
+      <h3 class="panel-title">Article:</h3>
+    </div>
+    <div class="panel-body">
+      {{html|safe}}
+    </div>
+  </div>
   <hr/>
+
   <div class="panel panel-default">
     <div class="panel-heading">
       <h3 class="panel-title">Sources:</h3>
@@ -67,8 +72,9 @@
 
   </div>
 </div>
+{% endblock %}
 
-
+{% block footer %}
 <script type="text/javascript">
 $(document).ready(function(){
   function mkLoad(){
@@ -77,9 +83,19 @@ $(document).ready(function(){
   function unLoad(){
     $('#loader').html('');
   }  
-  var content = $("#articleText");
+  var text = $('#articleText')
+  var content = $("#articleContent");
+  var topics = $('#topics');
+  topics.toggle();
+  text.toggle();
   content.toggle();
-  $('#toggle').on("click", function(){
+  $('#toggleText').on("click", function(){
+    text.toggle();
+  });
+  $('#toggleTopics').on("click", function(){
+    topics.toggle();
+  });
+  $('#toggleContent').on("click", function(){
     content.toggle();
   });
   $("#merge").on("click", function  () {
@@ -97,3 +113,4 @@ $(document).ready(function(){
   });
 })
 </script>
+{% endblock %}

@@ -2,11 +2,7 @@
 
 # Goose
 - Add more extractors for authors, pubdates, contents
-- change text parser to return structured text
 - use image parsers to get links?
-
-# Templates
-- switch to modular templates
 
 # Article
 - Add deep stats about sources e.g.
@@ -21,10 +17,7 @@
 - a different colour to source hyperlinks
 
 # Articles
-- sort by options
-- pagination
 - thumbnails on results
-- search
 - stats about db
 - topic stubs on results
 - keyboard shortcut for search or add
@@ -55,13 +48,8 @@
 # index
 make an index page
 
-
 # Scrape
 - Change get_domain to just return full host
-
-# db
-- get_nodes needs to be more configurable, return whatever arbitrary stuff you want
-- write get_article html to return marked up content 
 
 # stats
 - lots more here

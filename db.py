@@ -31,7 +31,7 @@ driver = GraphDatabase.driver(
 class session:
     @staticmethod
     def run(sttmnt, params):
-        print sttmnt
+        #print sttmnt
         sesh = driver.session()
         res = sesh.run(sttmnt, params)
         sesh.close()
@@ -40,35 +40,20 @@ class session:
 
 
 
-def insert_article(id, url, html, text):
+def insert_article(id, url, html, text, raw_html):
     conn = get_pgconn()
     c=conn.cursor()
     c.execute('''
     INSERT INTO 
         articles
-        (id,url,html, text)
+        (id,url,html, text, raw_html)
     VALUES
-        (%s,%s,%s,%s)
+        (%s,%s,%s,%s, %s)
+    ON CONFLICT (id) DO UPDATE
+        SET html = EXCLUDED.html,
+            text = EXCLUDED.text
     ;
-    ''', (id,url,html,text))
-    c.close()
-    conn.commit()
-    conn.close()
-
-def update_article(id, url, html, text):
-    conn = get_pgconn()
-    c=conn.cursor()
-    c.execute('''
-    UPDATE
-        articles
-    SET
-        url=%s,
-        html=%s,
-        text=%s
-    WHERE 
-        id=%s
-    ;
-    ''', (url,html,text, id))
+    ''', (id,url,html,text, raw_html))
     c.close()
     conn.commit()
     conn.close()
@@ -79,8 +64,6 @@ def get_node(_id):
 	WHERE id(n) = {nid}
 	return n
 	''', {'nid':int(_id)}))[0]['n']
-
-
 
 def get_node_by_propval(prop, val):
     return list(session.run('''

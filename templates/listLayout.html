@@ -28,7 +28,7 @@
         	{% for result in results %}
         		<tr>
         			{% for column in result %}
-        			<td>{{column}}</td>
+        			<td>{{column|safe}}</td>
         			{% endfor %}
         		</tr>
         	{% endfor %}
@@ -47,7 +47,7 @@
 		  }  
 
 		  $('#example').DataTable( {
-		    "dom": '<"top"iflp<"clear">>rt<"bottom"iflp<"clear">>'
+		    "dom": '<"top"iflp<"clear">>rt<"bottom"ip<"clear">>'
 		  } );
 		  $("#addNew").on("click", function  () {
 		    mkLoad()

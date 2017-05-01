@@ -11,7 +11,7 @@
     </div>
     <div class="panel-body">
       {% for source in sources %}
-      <span><i><a href="/domains/{{source.id}}">{{source.citedDomain}}</a></i> ({{source.articles}}), </span>
+      <span><i><a href="/domains/{{source[2]}}">{{source[0]}}</a></i> ({{source[1]}}), </span>
       {%endfor%}
     </div>
   </div>
@@ -21,7 +21,7 @@
     </div>
     <div class="panel-body">
       {% for source in citers %}
-      <span><i><a href="/domains/{{source.id}}">{{source.citingDomain}}</a></i> ({{source.articles}}), </span>
+      <span><i><a href="/domains/{{source[2]}}">{{source[0]}}</a></i> ({{source[1]}}), </span>
       {%endfor%}
     </div>
   </div>
