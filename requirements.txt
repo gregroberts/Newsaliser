@@ -31,7 +31,7 @@ dateparser == 0.6.0
 # goose\utils\__init__.py: 27
 # goose\utils\images.py: 27,28,29
 # scrape.py: 7
-goose_extractor == 1.0.25
+#goose_extractor == 1.0.25
 
 # goose\text.py: 147
 jieba == 0.35
