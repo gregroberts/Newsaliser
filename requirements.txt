@@ -43,9 +43,6 @@ lxml == 3.3.5
 # db.py: 1
 neo4j_driver == 1.0.0
 
-# scrape.py: 7
-newspaper == 0.0.9.8
-
 # goose\text.py: 163
 # topics.py: 1,2
 nltk == 2.0.5
