@@ -118,7 +118,7 @@ def merge_domain(domain):
     articles = map(lambda x: x.url, filter(lambda x: paper.url in x.url and paper.url!=x.url, paper.articles))
     print 'Consuming %d Articles' % len(articles)
     for ind, article in enumerate(articles):
-        print 'Article ',ind, ' - ',article.url
+        print 'Article ',ind, ' - ',article
         try:
             merge_article(article)
         except Exception as e:
