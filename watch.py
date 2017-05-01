@@ -53,8 +53,8 @@ if __name__ == '__main__':
         "http://Topix.com",
     ]
     while True:
-        for domain in tqdm(domains):
-            print domain
+        for ind, domain in enumerate(domains):
+            print 'Domain ', ind, ' - ', domain
             merge_domain(domain)
-        print 'Sleeping for one hour'
-        sleep(3600)
+        print 'Sleeping for one half hour'
+        sleep(1800)

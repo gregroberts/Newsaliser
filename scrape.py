@@ -117,8 +117,8 @@ def merge_domain(domain):
     paper = newspaper.build(domain)
     articles = map(lambda x: x.url, filter(lambda x: paper.url in x.url, paper.articles))
     print 'Consuming %d Articles' % len(articles)
-    for article in tqdm(articles):
-        print paper.url
+    for ind, article in enumerate(articles):
+        print 'Article ',ind, ' - ',paper.url
         try:
             merge_article(article)
         except Exception as e:
