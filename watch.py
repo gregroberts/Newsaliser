@@ -14,8 +14,6 @@ if __name__ == '__main__':
         "http://Weather.com",
         "http://Forbes.com",
         "http://Foxnews.com",
-        "http://Shutterstock.com",
-        "http://Accuweather.com",
         "http://Bloomberg.com",
         "http://Timesofindia.indiatimes.com",
         "http://Reuters.com",

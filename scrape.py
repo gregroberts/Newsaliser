@@ -111,13 +111,13 @@ def merge_article(article, crawl_depth=0):
     else:
         raise Exception('Failed to merge article')
 
-def merge_domain(domain):
+def merge_domain(domain, limit=100):
     if not 'http:' in domain:
         domain = 'http://' + domain
     paper = newspaper.build(domain)
     articles = map(lambda x: x.url, filter(lambda x: paper.url in x.url and paper.url!=x.url, paper.articles))
     print 'Consuming %d Articles' % len(articles)
-    for ind, article in enumerate(articles):
+    for ind, article in enumerate(articles[:limit]):
         print 'Article ',ind, ' - ',article
         try:
             merge_article(article)
